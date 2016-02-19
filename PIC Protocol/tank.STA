@@ -1,0 +1,57 @@
+
+ROM used:   920/32768 (1%)
+            920/32768 (1%) including unused fragments
+
+            0.8 Average locations per line
+            10.1 Average locations per statement
+
+RAM used:   26/3968 (1%) at main() level
+            55/3968 (1%) worst case
+
+Stack used: 4 worst case (1 in main + 3 for interrupts)
+Stack size: 31
+
+Lines Stmts  %   Files
+----- ----- ---  -----
+  296    91 100  tank.c
+   12     0   0  tank.h
+  823     0   0  ..\..\..\..\..\..\Program Files (x86)\PICC3\Devices\18F4620.h
+----- -----
+ 1131    91 Total
+
+Page ROM  %  RAM   Vol Diff  Functions:
+---- --- --- ---   --- ----  ----------
+0     38   2    1             @delay_ms1
+0     22   1    1             @I2C_WRITE_1
+0    158   9    6   717  3.4  recevie_i2c_packet
+0     90   5    6   544  3.2  send_i2c_packet
+0      4   0    1     9  0.7  set_PWM_PUMP_Speed
+0     12   1    1    35  1.7  read_flow_sensor
+0     12   1    1    35  1.7  read_level_sensor
+0    308  17    2  1718  7.9  SSP_isr
+0     84   5    0    69  1.4  MAIN
+0     10   1    0    69  1.4  @const678
+0     36   2    2    35  1.7  @PSTRINGC_9600_31766_31767
+ Inline         0    35  1.7  @cinit1
+
+Program metrics:
+    Functions               10
+    Statements              91
+    Comments                222
+    Volume (V)              4516
+    Difficulty (D)          27.5
+    Effort to implement (E) 124258
+    Time to implement (T)   1 hours, 55 minutes
+    Est Delivered Bugs (B)  1
+    Cyclomatic Complexity   18
+    Maintainability (MI)    146
+
+ Segment     Used  Free
+-----------  ----  ----
+00000-00002     4  0  
+00004-00006     4  0  
+00008-00094   142  0  
+00096-0FFFE   770  64616  
+
+
+

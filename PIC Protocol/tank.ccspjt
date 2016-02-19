@@ -1,0 +1,23 @@
+[PROJECT]
+Target=tank.hex
+Processor_Text=PIC18F4620
+CCSVerions=5.008
+Compiler=PCH
+CCSVersion=5.008
+[Target Data]
+FileList=tank.c
+[Directories]
+Include=C:\Program Files (x86)\PICC3\Devices\;C:\Program Files (x86)\PICC3\Drivers\;C:\Users\Hafiz\Desktop\Hardware Graduation Project Files\Arduino Protocol Final\PIC Protocol\
+[C:\Users\Hafiz\Desktop\Hardware Graduation Project Files\Arduino Protocol Final\PIC Protocol\tank]
+Type=4
+[mru-list]
+1=tank.c
+[Opened Files]
+1=tank.c
+2=tank.h
+3=
+[tank.c]
+Type=4
+[Units]
+Count=1
+1=tank (main)

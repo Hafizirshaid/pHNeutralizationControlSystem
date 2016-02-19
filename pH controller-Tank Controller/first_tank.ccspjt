@@ -1,0 +1,24 @@
+[PROJECT]
+Target=first_tank.hex
+Processor_Text=PIC18F4620
+CCSVerions=5.008
+Compiler=PCH
+CCSVersion=5.008
+[Target Data]
+FileList=first_tank.c
+[Directories]
+Include=C:\Program Files (x86)\PICC3\Devices\;C:\Program Files (x86)\PICC3\Drivers\;C:\Users\Hafiz\Desktop\pH controller first tank\;C:\Users\Hafiz\Desktop\Hardware Graduation Project Files\pH controller first tank\
+[C:\Users\Hafiz\Desktop\pH controller first tank\first_tank]
+Type=4
+[mru-list]
+1=first_tank.c
+[Opened Files]
+1=first_tank.c
+2=
+3=..\..\..\..\..\Program Files (x86)\PICC3\Devices\18F4620.h
+4=
+[first_tank.c]
+Type=4
+[Units]
+Count=1
+1=first_tank (main)

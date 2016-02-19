@@ -1,0 +1,310 @@
+/*
+  
+*/
+
+#include <tank.h>
+
+#use rs232(baud=9600,parity=N,xmit=PIN_C6,rcv=PIN_C7,bits=8,stream=PORT1)
+
+#use i2c(Slave,Fast,sda=PIN_C4,scl=PIN_C3,address=0x15)
+
+#define TYPE_HANDSHAKE_TANKS      0x01 //to hanshake with the PIC (Tank)
+#define TYPE_DISCONNECT_PC        0x02 //to disconnect the program 
+#define TYPE_ACK                  0x03 //acknolgment 
+#define TYPE_NACK                 0x04 //negative ack 
+#define TYPE_REQUEST_FLOW         0x05 //to request the flow sensor 
+#define TYPE_REQUEST_LEVEL        0x06 //to reqest the level sensor 
+#define TYPE_BAD_PACKET           0xFF //packet that has error in it's check sum 
+#define TYPE_REQUEST_ALL_SENSORS  0x12 //type to request all sensors in the system at all 
+#define TYPE_SET_PUMP_SPEED       0x13 //to set the pump speed
+
+#define DELAY_TIME 10
+
+//for firas the address is 0x15 
+//for hafiz the address is 0x10
+#define DEVICE_ADDRESS 0x15
+
+/**************** System variables *********/
+#define SYSTEM_OFF 0x20   //system is off 
+#define SYSTEM_ON 0x21    //system is on 
+#define NOTHING 0x25
+#define SEND_FLOW 0x26
+#define SEND_LEVEL 0x27
+#define SET_PUMP_SPEED 0x28
+#define DISCONNECT_PROGRAM 0x29
+#define SEND_ACK 0x30
+
+/**** THIS VARIABLE SHOUD HOLDS THE VALUE OF THE STATUS OF THE SYSTEM ****/
+unsigned int8 status = SYSTEM_OFF;     //the status of the system 
+unsigned int8 hanshake_variable = 0;    //used in handshake process 
+unsigned int8 current_state = NOTHING;  //the current state of the state machine, used in intrrupts 
+
+/*
+ *
+ */
+struct i2c_packet
+{
+  byte packet_type;
+  byte data_1;
+  byte data_2;
+  byte data_3;
+  byte data_4;
+  byte checksum;
+};
+
+
+/*
+ * this function is going to receive a packet from i2c bus
+ TODO : implement checksum
+ */
+ 
+struct i2c_packet recevie_i2c_packet()
+{
+
+   //variables 
+  int8 packet_type, data_1, data_2, data_3, data_4, checksum;
+  
+  //first byte is the arrdress 
+  i2c_read();
+  delay_ms(DELAY_TIME);
+   
+  //receive all bytes and wait some delay 
+  packet_type = i2c_read();
+  delay_ms(DELAY_TIME);
+  
+  data_1 = i2c_read();
+  delay_ms(DELAY_TIME);
+  
+  data_2 = i2c_read();
+  delay_ms(DELAY_TIME);
+  
+  data_3 = i2c_read();
+  delay_ms(DELAY_TIME);
+  
+  data_4 = i2c_read();
+  delay_ms(DELAY_TIME);
+  
+  checksum = i2c_read();
+  delay_ms(DELAY_TIME);
+  
+  //construct the packet and return it 
+  struct i2c_packet received_packet;
+  
+  received_packet.packet_type = packet_type;
+  received_packet.data_1 = data_1;
+  received_packet.data_2 = data_2;
+  received_packet.data_3 = data_3;
+  received_packet.data_4 = data_4;
+  received_packet.checksum = checksum;
+ 
+  return received_packet;
+}
+
+/*
+ * this function is going to send a packet throught i2c bus 
+ */
+void send_i2c_packet(int8 packet_type, int8 data_1,int8 data_2,int8 data_3,int8 data_4)
+{
+   //make checksum 
+
+  int8 checksum = 0;
+  checksum = checksum ^ packet_type;
+  checksum = checksum ^ data_1;
+  checksum = checksum ^ data_2;
+  checksum = checksum ^ data_3;
+  checksum = checksum ^ data_4;
+  
+  //send all packets through i2c Bus 
+  i2c_write(packet_type);
+  delay_ms(DELAY_TIME);
+  
+  i2c_write(data_1);
+  delay_ms(DELAY_TIME);
+  
+  i2c_write(data_2);
+  delay_ms(DELAY_TIME);
+  
+  i2c_write(data_3);
+  delay_ms(DELAY_TIME);
+  
+  i2c_write(data_4);
+  delay_ms(DELAY_TIME);
+  
+  i2c_write(checksum);
+}
+
+void print_packet(struct i2c_packet p)
+{
+   printf("%d %d %d %d %d %d \n\r",p.packet_type,p.data_1,p.data_2,p.data_3,p.data_4,p.checksum);
+}
+
+
+/*** this function is gonna control the speed of the Pump ***/
+void set_PWM_PUMP_Speed(int8 speed)
+{
+   
+}
+
+/*** this function is going to read the value of the flow sensor ***/
+int8 read_flow_sensor()
+{
+   int8 value = 14;
+  
+   return value;
+}
+
+/***** this function is going to return the value of the level sensor *****/ 
+int8 read_level_sensor()
+{
+   int8 value = 20;
+   
+   return value;
+}
+
+
+
+/*** INTURRUPT FUNCTION ROTINE ***/
+#int_SSP
+void SSP_isr(void) 
+{
+//printf("sfgf\n\r");
+   int8 state = i2c_isr_state();
+   if(state >= 0x80)//Master is requesting data
+   {
+      if(status == SYSTEM_ON)
+      {
+        
+         switch(current_state)
+         {
+            
+            case SEND_LEVEL:
+               send_i2c_packet(TYPE_REQUEST_LEVEL,read_level_sensor(),0,0,0);
+               
+               break;
+               
+            case SEND_FLOW:
+               send_i2c_packet(TYPE_REQUEST_FLOW,read_flow_sensor(),0,0,0);
+               
+               break;
+               
+            case SEND_ACK:
+               send_i2c_packet(TYPE_ACK,0,0,0,0);
+               break;
+               
+            case SET_PUMP_SPEED:
+               send_i2c_packet(TYPE_ACK,0,0,0,0);
+               break;
+         }
+         
+         current_state = NOTHING;
+      }
+      else if(status == SYSTEM_OFF)
+      {
+         //two way handshake
+         if(hanshake_variable == 1)
+         {
+            send_i2c_packet(TYPE_ACK,0,0,0,0);
+            
+            //make the program on
+            status = SYSTEM_ON;
+         }
+         else
+         {
+         
+            //send nack 
+            send_i2c_packet(TYPE_NACK,0,0,0,0);
+         }
+      }
+   
+   }
+   else if(state < 0x80)//Master is sending data
+   {
+     struct i2c_packet command_packet;
+     command_packet = recevie_i2c_packet();
+      //printf("received\n\r");
+      
+      if(status == SYSTEM_ON)
+      {
+         //printf("the command is %c \n\r",command);
+         switch(command_packet.packet_type)
+         {
+            case TYPE_REQUEST_LEVEL:
+              
+               current_state = SEND_LEVEL;
+               break;
+               
+            case TYPE_REQUEST_FLOW:
+               
+               current_state = SEND_FLOW;
+               break;
+               
+            case TYPE_DISCONNECT_PC :
+               status = SYSTEM_OFF;
+               hanshake_variable = 0;
+          
+               break;
+               
+            case TYPE_HANDSHAKE_TANKS:
+            
+               //this is if the master request another handshake,send it or it go in deep loop
+               //wait for ever LMFAO
+               current_state = SEND_ACK;
+               break;
+               
+            case TYPE_SET_PUMP_SPEED :
+               //set the current state to set pump state to send an ack to the master 
+               current_state = SET_PUMP_SPEED;
+               
+               //get the value from the packet  
+               int8 Pump_Speed = command_packet.data_1;
+               
+               //pass it to this fucntion to change the speed of the pump
+               set_PWM_PUMP_Speed(Pump_Speed);
+               
+               break;
+               
+            default:
+            
+               
+         }
+      }
+      else if(status == SYSTEM_OFF)
+      {
+        // printf("reading char h from mastert \n\r");
+         
+         //fisrt byte is the address
+         //printf("fisrt byte is the address%x\n\r",i2c_read());
+         
+         //char read_char = i2c_read();
+         
+       //  printf("I Just received the char%c\n\r",read_char);
+         
+         //if the system received 'h' then this is for handshake
+         if(command_packet.packet_type == TYPE_HANDSHAKE_TANKS)
+         {
+            //set handshake variable to 1
+            //printf("OK \n\r");
+            hanshake_variable = 1;
+            //here do not make the program on,make it above when you send the char a
+         }
+         else
+         {
+            //printf("Not OK \n\r");
+         }
+      }
+   }
+}
+
+/*
+ * main program function 
+ */
+void main()
+{
+   enable_interrupts(int_SSP);
+   enable_interrupts(GLOBAL);
+   printf("hello \n\r");
+   while(TRUE)
+   {
+      
+   }
+}

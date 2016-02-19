@@ -1,0 +1,18 @@
+C:\Users\Hafiz\Desktop\pH Controller console\pH Controller console\bin\Debug\pH Controller console.exe.config
+C:\Users\Hafiz\Desktop\pH Controller console\pH Controller console\bin\Debug\pH Controller console.exe
+C:\Users\Hafiz\Desktop\pH Controller console\pH Controller console\bin\Debug\pH Controller console.pdb
+C:\Users\Hafiz\Desktop\pH Controller console\pH Controller console\obj\Debug\pH Controller console.csprojResolveAssemblyReference.cache
+C:\Users\Hafiz\Desktop\pH Controller console\pH Controller console\obj\Debug\pH_Controller_console.Properties.Resources.resources
+C:\Users\Hafiz\Desktop\pH Controller console\pH Controller console\obj\Debug\pH Controller console.csproj.GenerateResource.Cache
+C:\Users\Hafiz\Desktop\pH Controller console\pH Controller console\obj\Debug\pH Controller console.exe
+C:\Users\Hafiz\Desktop\pH Controller console\pH Controller console\obj\Debug\pH Controller console.pdb
+C:\Users\Hafiz\Desktop\pH Controller console\pH Controller console\obj\Debug\pH_Controller_console.pHControlSystem.resources
+C:\Users\Hafiz\Desktop\Hardware Graduation Project Files\pH Controller console\pH Controller console\bin\Debug\pH Controller console.exe.config
+C:\Users\Hafiz\Desktop\Hardware Graduation Project Files\pH Controller console\pH Controller console\obj\Debug\pH Controller console.exe
+C:\Users\Hafiz\Desktop\Hardware Graduation Project Files\pH Controller console\pH Controller console\obj\Debug\pH Controller console.pdb
+C:\Users\Hafiz\Desktop\Hardware Graduation Project Files\pH Controller console\pH Controller console\bin\Debug\pH Controller console.exe
+C:\Users\Hafiz\Desktop\Hardware Graduation Project Files\pH Controller console\pH Controller console\bin\Debug\pH Controller console.pdb
+C:\Users\Hafiz\Desktop\Hardware Graduation Project Files\pH Controller console\pH Controller console\obj\Debug\pH Controller console.csprojResolveAssemblyReference.cache
+C:\Users\Hafiz\Desktop\Hardware Graduation Project Files\pH Controller console\pH Controller console\obj\Debug\pH_Controller_console.pHControlSystem.resources
+C:\Users\Hafiz\Desktop\Hardware Graduation Project Files\pH Controller console\pH Controller console\obj\Debug\pH_Controller_console.Properties.Resources.resources
+C:\Users\Hafiz\Desktop\Hardware Graduation Project Files\pH Controller console\pH Controller console\obj\Debug\pH Controller console.csproj.GenerateResource.Cache

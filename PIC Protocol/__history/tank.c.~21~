@@ -1,0 +1,139 @@
+/*
+   
+
+
+*/
+
+#include <tank.h>
+
+#use rs232(baud=9600,parity=N,xmit=PIN_C6,rcv=PIN_C7,bits=8,stream=PORT1)
+
+#use i2c(Slave,Fast,sda=PIN_C4,scl=PIN_C3,address=0x15)
+
+/*
+ *
+ */
+struct i2c_packet
+{
+  byte packet_type;
+  byte data_1;
+  byte data_2;
+  byte data_3;
+  byte data_4;
+  byte checksum;
+};
+
+#define DELAY_TIME 1
+
+/*
+ * this function is going to receive a packet from i2c bus
+ TODO : implement checksum
+ */
+ 
+struct i2c_packet recevie_i2c_packet()
+{
+
+   //variables 
+  int8 packet_type, data_1, data_2, data_3, data_4, checksum;
+  
+  //first byte is the arrdress 
+  i2c_read();
+  delay_ms(DELAY_TIME);
+   
+  //receive all bytes and wait some delay 
+  packet_type = i2c_read();
+  delay_ms(DELAY_TIME);
+  
+  data_1 = i2c_read();
+  delay_ms(DELAY_TIME);
+  
+  data_2 = i2c_read();
+  delay_ms(DELAY_TIME);
+  
+  data_3 = i2c_read();
+  delay_ms(DELAY_TIME);
+  
+  data_4 = i2c_read();
+  delay_ms(DELAY_TIME);
+  
+  checksum = i2c_read();
+  delay_ms(DELAY_TIME);
+  
+  //construct the packet and return it 
+  struct i2c_packet received_packet;
+  
+  received_packet.packet_type = packet_type;
+  received_packet.data_1 = data_1;
+  received_packet.data_2 = data_2;
+  received_packet.data_3 = data_3;
+  received_packet.data_4 = data_4;
+  received_packet.checksum = checksum;
+  
+  return received_packet;
+  
+  
+}
+
+/*
+ * this function is going to send a packet throught i2c bus 
+ */
+void send_packet(byte packet_type, byte data_1,byte data_2,byte data_3,byte data_4)
+{
+   //make checksum 
+
+  int8 checksum = 0;
+  checksum = checksum ^ packet_type;
+  checksum = checksum ^ data_1;
+  checksum = checksum ^ data_2;
+  checksum = checksum ^ data_3;
+  checksum = checksum ^ data_4;
+  
+  //send all packets through i2c Bus 
+  i2c_write(packet_type);
+  i2c_write(data_1);
+  i2c_write(data_2);
+  i2c_write(data_3);
+  i2c_write(data_4);
+  i2c_write(checksum);
+}
+
+void print_packet(struct i2c_packet p)
+{
+   printf("%d %d %d %d %d %d \n\r",p.packet_type,p.data_1,p.data_2,p.data_3,p.data_4,p.checksum);
+}
+
+/*** INTURRUPT FUNCTION ROTINE ***/
+#int_SSP
+void SSP_isr(void) 
+{
+   int8 state = i2c_isr_state();
+   
+   //printf("The State of I2C Bus is %u\n\r",state);
+   
+   if(state >= 0x80)//Master is requesting data
+   {
+       send_packet(10,20,30,40,50);
+      
+   }
+   else if(state < 0x80)//Master is sending data
+   {
+      struct i2c_packet received;
+      received = recevie_i2c_packet();
+      print_packet(received);
+   }
+}
+
+/*
+ * main program function 
+ */
+void main()
+{
+   enable_interrupts(int_SSP);
+   enable_interrupts(GLOBAL);
+   printf("hello \n\r");
+   while(TRUE)
+   {
+      
+   }
+
+}

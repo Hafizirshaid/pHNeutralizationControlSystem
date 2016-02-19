@@ -1,0 +1,731 @@
+CCS PCH C Compiler, Version 5.008, 5967               24-Mar-14 22:21
+
+               Filename:   C:\Users\Hafiz\Desktop\Hardware Graduation Project Files\pH controller first tank\first_tank.lst
+
+               ROM used:   870 bytes (1%)
+                           Largest free fragment is 64666
+               RAM used:   28 (1%) at main() level
+                           36 (1%) worst case
+               Stack used: 3 locations (1 in main + 2 for interrupts)
+               Stack size: 31
+
+*
+00000:  GOTO   0300
+*
+00008:  MOVWF  04
+0000A:  MOVFF  FD8,05
+0000E:  MOVFF  FE0,06
+00012:  MOVLB  0
+00014:  MOVFF  FE9,0C
+00018:  MOVFF  FEA,07
+0001C:  MOVFF  FE1,08
+00020:  MOVFF  FE2,09
+00024:  MOVFF  FD9,0A
+00028:  MOVFF  FDA,0B
+0002C:  MOVFF  FF3,12
+00030:  MOVFF  FF4,13
+00034:  MOVFF  FFA,14
+00038:  MOVFF  00,0E
+0003C:  MOVFF  01,0F
+00040:  MOVFF  02,10
+00044:  MOVFF  03,11
+00048:  BTFSS  F9D.3
+0004A:  GOTO   0054
+0004E:  BTFSC  F9E.3
+00050:  GOTO   0158
+00054:  MOVFF  0E,00
+00058:  MOVFF  0F,01
+0005C:  MOVFF  10,02
+00060:  MOVFF  11,03
+00064:  MOVFF  0C,FE9
+00068:  MOVFF  07,FEA
+0006C:  BSF    07.7
+0006E:  MOVFF  08,FE1
+00072:  MOVFF  09,FE2
+00076:  MOVFF  0A,FD9
+0007A:  MOVFF  0B,FDA
+0007E:  MOVFF  12,FF3
+00082:  MOVFF  13,FF4
+00086:  MOVFF  14,FFA
+0008A:  MOVF   04,W
+0008C:  MOVFF  06,FE0
+00090:  MOVFF  05,FD8
+00094:  RETFIE 0
+....................  
+.................... /******************************** 
+....................    pH control system  
+....................    Najah National University  
+....................    Computer Engineering  
+....................    Hardware Graduation Project  
+....................    Tank Controller  
+....................    Description : 
+....................     
+....................    TODO : 
+....................       implement the following functions :  
+....................       int Send_Packet(struct Packet px) 
+....................       struct Packet Receive_Packet() 
+....................     
+....................    *******  Code Table Used in this Program and the Description ********** 
+....................    a--->the sent char to the master to tell him i'm alive man 
+....................          used in handshake to give an ack 
+....................          note that a used to send ack to other commands  
+....................    h--->the readed char from the master to check the connectivity,handshake issue 
+....................    L--->read level sensor 
+....................    F--->read flow sensor 
+....................    d--->disconnect the program 
+....................  
+....................    note that  
+.................... //for firas the address is 0x15  
+.................... //for hafiz the address is 0x10 
+....................  
+.................... ************* includes ********************/ 
+....................  
+.................... #include <first_tank.h> 
+.................... #include <18F4620.h> 
+.................... //////// Standard Header file for the PIC18F4620 device //////////////// 
+.................... #device PIC18F4620 
+00096:  DATA 50,72
+00098:  DATA 6F,67
+0009A:  DATA 72,61
+0009C:  DATA 6D,20
+0009E:  DATA 73,74
+000A0:  DATA 61,74
+000A2:  DATA 65,20
+000A4:  DATA 69,73
+000A6:  DATA 20,25
+000A8:  DATA 75,20
+000AA:  DATA 0A,0D
+000AC:  DATA 00,00
+000AE:  DATA 63,75
+000B0:  DATA 72,72
+000B2:  DATA 65,6E
+000B4:  DATA 74,20
+000B6:  DATA 73,74
+000B8:  DATA 61,74
+000BA:  DATA 65,20
+000BC:  DATA 69,73
+000BE:  DATA 20,25
+000C0:  DATA 75,20
+000C2:  DATA 0A,0D
+000C4:  DATA 00,00
+000C6:  DATA 68,61
+000C8:  DATA 6E,64
+000CA:  DATA 73,68
+000CC:  DATA 61,6B
+000CE:  DATA 65,20
+000D0:  DATA 73,74
+000D2:  DATA 61,74
+000D4:  DATA 65,20
+000D6:  DATA 69,73
+000D8:  DATA 20,25
+000DA:  DATA 75,20
+000DC:  DATA 0A,0D
+000DE:  DATA 00,00
+000E0:  TBLRD*+
+000E2:  MOVF   FF5,F
+000E4:  BZ    0102
+000E6:  MOVFF  FF6,22
+000EA:  MOVFF  FF7,23
+000EE:  MOVF   FF5,W
+000F0:  CLRWDT
+000F2:  BTFSS  F9E.4
+000F4:  BRA    00F0
+000F6:  MOVWF  FAD
+000F8:  MOVFF  22,FF6
+000FC:  MOVFF  23,FF7
+00100:  BRA    00E0
+00102:  RETURN 0
+*
+00278:  ADDWF  FE8,W
+0027A:  CLRF   FF7
+0027C:  RLCF   FF7,F
+0027E:  ADDLW  93
+00280:  MOVWF  FF6
+00282:  MOVLW  02
+00284:  ADDWFC FF7,F
+00286:  TBLRD*-
+00288:  MOVF   FF5,W
+0028A:  MOVWF  FFA
+0028C:  TBLRD*
+0028E:  MOVF   FF5,W
+00290:  MOVWF  FF9
+00292:  DATA 98,01
+00294:  DATA 8A,01
+00296:  DATA AE,01
+00298:  DATA B4,01
+0029A:  DATA A6,01
+0029C:  DATA 2A,2A
+0029E:  DATA 2A,2A
+002A0:  DATA 2A,2A
+002A2:  DATA 2A,2A
+002A4:  DATA 2A,2A
+002A6:  DATA 2A,2A
+002A8:  DATA 2A,2A
+002AA:  DATA 4E,65
+002AC:  DATA 77,20
+002AE:  DATA 49,6E
+002B0:  DATA 74,75
+002B2:  DATA 72,72
+002B4:  DATA 70,74
+002B6:  DATA 2A,2A
+002B8:  DATA 2A,2A
+002BA:  DATA 2A,2A
+002BC:  DATA 2A,2A
+002BE:  DATA 2A,2A
+002C0:  DATA 2A,2A
+002C2:  DATA 2A,2A
+002C4:  DATA 0A,0D
+002C6:  DATA 00,00
+002C8:  DATA 2A,2A
+002CA:  DATA 2A,2A
+002CC:  DATA 2A,2A
+002CE:  DATA 2A,2A
+002D0:  DATA 2A,2A
+002D2:  DATA 2A,2A
+002D4:  DATA 2A,2A
+002D6:  DATA 2A,53
+002D8:  DATA 74,61
+002DA:  DATA 72,74
+002DC:  DATA 20,6F
+002DE:  DATA 66,20
+002E0:  DATA 74,68
+002E2:  DATA 65,20
+002E4:  DATA 50,72
+002E6:  DATA 6F,67
+002E8:  DATA 72,61
+002EA:  DATA 6D,2A
+002EC:  DATA 2A,2A
+002EE:  DATA 2A,2A
+002F0:  DATA 2A,2A
+002F2:  DATA 2A,2A
+002F4:  DATA 2A,2A
+002F6:  DATA 2A,2A
+002F8:  DATA 2A,2A
+002FA:  DATA 2A,2A
+002FC:  DATA 0A,0D
+002FE:  DATA 00,00
+....................  
+.................... #list 
+....................  
+.................... #device ADC=16 
+....................  
+.................... #FUSES WDT                      //Watch Dog Timer 
+.................... #FUSES WDT1                     //Watch Dog Timer uses 1:1 Postscale 
+.................... #FUSES NOBROWNOUT               //No brownout reset 
+.................... #FUSES NOLVP                    //No low voltage prgming, B3(PIC16) or B5(PIC18) used for I/O 
+.................... #FUSES NOXINST                  //Extended set extension and Indexed Addressing mode disabled (Legacy mode) 
+....................  
+.................... #use delay(crystal=20000000) 
+*
+00132:  CLRF   FEA
+00134:  MOVLW  22
+00136:  MOVWF  FE9
+00138:  MOVF   FEF,W
+0013A:  BZ    0156
+0013C:  MOVLW  06
+0013E:  MOVWF  01
+00140:  CLRF   00
+00142:  DECFSZ 00,F
+00144:  BRA    0142
+00146:  DECFSZ 01,F
+00148:  BRA    0140
+0014A:  MOVLW  7B
+0014C:  MOVWF  00
+0014E:  DECFSZ 00,F
+00150:  BRA    014E
+00152:  DECFSZ FEF,F
+00154:  BRA    013C
+00156:  RETURN 0
+....................  
+....................  
+....................  
+.................... /*************** Deveices ****************/ 
+....................  
+.................... //this is for Serial port configarations  
+.................... #use rs232(baud=9600,parity=N,xmit=PIN_C6,rcv=PIN_C7,bits=8,stream=PORT1,restart_wdt) 
+....................  
+.................... #define DEVICE_ADDRESS 0x15 
+....................  
+.................... //this is for I2C configarations  
+.................... #use i2c(Slave,Fast,sda=PIN_C4,scl=PIN_C3,address=DEVICE_ADDRESS) 
+*
+00110:  MOVF   FC9,W
+00112:  MOVFF  23,FC9
+00116:  BSF    FC6.4
+00118:  BCF    F9E.3
+0011A:  BTFSC  FC7.0
+0011C:  BRA    011A
+0011E:  CLRF   01
+00120:  BTFSC  FC6.4
+00122:  INCF   01,F
+00124:  RETURN 0
+....................  
+.................... /**************** System variables *********/ 
+.................... #define SYSTEM_OFF 0   //system is off  
+.................... #define SYSTEM_ON 1    //system is on  
+.................... #define NOTHING 5 
+.................... #define SEND_FLOW 6 
+.................... #define SEND_LEVEL 7 
+.................... #define SET_PUMP_SPEED 8 
+.................... #define DISCONNECT_PROGRAM 9 
+.................... #define SEND_ACK 10 
+....................  
+.................... /**** THIS VARIABLE SHOUD HOLDS THE VALUE OF THE STATUS OF THE SYSTEM ****/ 
+.................... unsigned int8 status = SYSTEM_OFF;     //the status of the system  
+.................... unsigned int8 hanshake_variable = 0;    //used in handshake process  
+.................... unsigned int8 current_state = NOTHING;  //the current state of the state machine, used in intrrupts  
+....................  
+.................... enum packet_types 
+.................... { 
+....................    HANDSHAKE = 0x01, 
+....................    SEND_FLOW_l = 0x02, 
+....................     
+.................... } Types; 
+....................  
+.................... //this is the structure of the packet that we wanna use it to communicate in I2C Bus 
+.................... struct packet 
+.................... { 
+....................   unsigned int8 Packet_Num; 
+....................   unsigned int8 Packet_Type; 
+....................   unsigned int8 Data_1; 
+....................   unsigned int8 Data_2; 
+....................   unsigned int8 Data_3; 
+....................   unsigned int8 Chech_Sum; 
+.................... }; 
+....................  
+.................... void send_packet(struct packet px) 
+.................... { 
+.................... //px.Packet_Type = Types.HANDSHAKE; 
+....................   //write all structure memeber to the bus 
+....................   i2c_write(px.Packet_Num); 
+....................   i2c_write(px.Packet_Type); 
+....................   i2c_write(px.Data_1); 
+....................   i2c_write(px.Data_2); 
+....................   i2c_write(px.Data_3); 
+....................   i2c_write(px.Chech_Sum); 
+.................... } 
+....................  
+.................... //this function is going to receive the packet  
+.................... struct packet Receive_Packet() 
+.................... { 
+....................    struct packet Received; 
+....................    Received.Packet_Num = i2c_read(); 
+....................    Received.Packet_Type = i2c_read(); 
+....................    Received.Data_1 = i2c_read(); 
+....................    Received.Data_2 = i2c_read(); 
+....................    Received.Data_3 = i2c_read(); 
+....................    Received.Chech_Sum = i2c_read(); 
+....................    return Received; 
+.................... } 
+....................  
+....................  
+.................... /*** this function is gonna control the speed of the Pump ***/ 
+.................... void set_PWM_PUMP_Speed(int8 speed) 
+.................... { 
+*
+00004:  GOTO   0240 (RETURN)
+....................   // set_pwm2_duty(speed); 
+....................   // printf("the speed of the pump is %u \n\r",speed); 
+.................... } 
+....................  
+.................... /*** this function is going to read the value of the flow sensor ***/ 
+.................... int8 read_flow_sensor() 
+*
+00126:  MOVLW  0E
+00128:  MOVWF  22
+.................... { 
+....................    int8 value = 14; 
+....................    //printf("the value of flow sensor is %u \n\r",value); 
+....................    return value; 
+0012A:  MOVFF  22,01
+0012E:  GOTO   019A (RETURN)
+.................... } 
+....................  
+.................... /***** this function is going to return the value of the level sensor *****/  
+.................... int8 read_level_sensor() 
+*
+00104:  MOVLW  14
+00106:  MOVWF  22
+.................... { 
+....................    int8 value = 20; 
+....................   // printf("the value of level sensor is %u \n\r",value); 
+....................    return value; 
+00108:  MOVFF  22,01
+0010C:  GOTO   018C (RETURN)
+.................... } 
+....................  
+.................... /***** this fucntion prints the system status variables *****/ 
+.................... void print_system_state() 
+.................... { 
+....................  
+....................    printf("Program state is %u \n\r",status); 
+....................    printf("current state is %u \n\r",current_state); 
+....................    printf("handshake state is %u \n\r",hanshake_variable); 
+.................... } 
+....................  
+.................... /*** INTURRUPT FUNCTION ROTINE ***/ 
+.................... #int_SSP 
+.................... void SSP_isr(void)  
+.................... { 
+....................   printf("**************New Inturrpt**************\n\r"); 
+*
+00158:  MOVLW  9C
+0015A:  MOVWF  FF6
+0015C:  MOVLW  02
+0015E:  MOVWF  FF7
+00160:  RCALL  00E0
+....................     
+....................    //delay_ms(100); 
+....................   // print_system_state(); 
+....................     
+....................    //get the state of I2C Bus 
+....................    int8 state = i2c_isr_state(); 
+00162:  BTFSC  FC7.5
+00164:  BRA    016C
+00166:  CLRF   1B
+00168:  BTFSC  FC7.2
+0016A:  BSF    1B.7
+0016C:  MOVF   1B,W
+0016E:  INCF   1B,F
+00170:  MOVWF  1E
+....................     
+....................    //printf("The State of I2C Bus is %u\n\r",state); 
+....................     
+....................    if(state >= 0x80)//Master is requesting data 
+00172:  MOVF   1E,W
+00174:  SUBLW  7F
+00176:  BC    01C8
+....................    { 
+....................       //printf("Master is requesting data \n\r"); 
+....................       if(status == SYSTEM_ON) 
+00178:  DECFSZ 17,W
+0017A:  BRA    01BA
+....................       { 
+....................          //printf("System is ON, checking the current state!\n\r"); 
+....................          switch(current_state) 
+0017C:  MOVLW  06
+0017E:  SUBWF  19,W
+00180:  ADDLW  FB
+00182:  BC    01B4
+00184:  ADDLW  05
+00186:  GOTO   0278
+....................          { 
+....................              
+....................             case SEND_LEVEL: 
+....................              //  printf("Sending the value of level sensor to the master %u \n\r",read_level_sensor()); 
+....................                //i2c_write('l'); 
+....................                i2c_write(read_level_sensor()); 
+0018A:  BRA    0104
+0018C:  MOVFF  01,22
+00190:  MOVFF  22,23
+00194:  RCALL  0110
+....................                break; 
+00196:  BRA    01B4
+....................                 
+....................             case SEND_FLOW: 
+....................               // printf("Sending the value of flow sensor to the master %u \n\r",read_flow_sensor()); 
+....................                // i2c_write('f'); 
+....................                i2c_write(read_flow_sensor()); 
+00198:  BRA    0126
+0019A:  MOVFF  01,22
+0019E:  MOVFF  22,23
+001A2:  RCALL  0110
+....................                 
+....................                break; 
+001A4:  BRA    01B4
+....................                 
+....................             case SEND_ACK: 
+....................                //printf("Sending ACK to Master. \n\r"); 
+....................                i2c_write('a'); 
+001A6:  MOVLW  61
+001A8:  MOVWF  23
+001AA:  RCALL  0110
+....................                break; 
+001AC:  BRA    01B4
+....................                 
+....................             case SET_PUMP_SPEED: 
+....................                //printf("Sending SET_PUMP_SPEED ACK. \n\r"); 
+....................                i2c_write('a'); 
+001AE:  MOVLW  61
+001B0:  MOVWF  23
+001B2:  RCALL  0110
+....................                break; 
+....................          } 
+....................           
+....................          current_state = NOTHING; 
+001B4:  MOVLW  05
+001B6:  MOVWF  19
+....................       } 
+001B8:  BRA    01C6
+....................       else if(status == SYSTEM_OFF) 
+001BA:  MOVF   17,F
+001BC:  BNZ   01C6
+....................       { 
+....................          //two way handshake 
+....................          if(hanshake_variable == 1) 
+001BE:  DECFSZ 18,W
+001C0:  BRA    01C6
+....................          { 
+....................             //printf("Send char 'a' to master\n\r"); 
+....................              
+....................             //send char a to the master,this is the ACK 
+....................             //printf("the status of read is %u \n\r",i2c_write('a')); 
+....................              
+....................             //i2c_write('a'); 
+....................             //make the program on 
+....................             status = SYSTEM_ON; 
+001C2:  MOVLW  01
+001C4:  MOVWF  17
+....................          } 
+....................       } 
+....................    } 
+001C6:  BRA    0272
+....................    else if(state < 0x80)//Master is sending data 
+001C8:  MOVF   1E,W
+001CA:  SUBLW  7F
+001CC:  BNC   0272
+....................    { 
+....................       //check system state 
+....................       delay_ms(50); 
+001CE:  MOVLW  32
+001D0:  MOVWF  22
+001D2:  RCALL  0132
+....................      // printf("Master is sending data\n\r"); 
+....................       if(status == SYSTEM_ON) 
+001D4:  DECFSZ 17,W
+001D6:  BRA    0242
+....................       { 
+....................          i2c_read(); 
+001D8:  BCF    FC6.6
+001DA:  BTFSS  F9E.3
+001DC:  BRA    01DA
+001DE:  MOVF   FC9,W
+001E0:  BSF    FC6.4
+....................          delay_ms(50); 
+001E2:  MOVLW  32
+001E4:  MOVWF  22
+001E6:  RCALL  0132
+....................          //printf("fisrt byte is the address %x\n\r",i2c_read()); 
+....................          char command = (char)i2c_read(); 
+001E8:  BCF    FC6.6
+001EA:  BTFSS  F9E.3
+001EC:  BRA    01EA
+001EE:  MOVF   FC9,W
+001F0:  BSF    FC6.4
+001F2:  MOVWF  1F
+....................           
+....................          //printf("the command is %c \n\r",command); 
+....................          switch(command) 
+001F4:  MOVF   1F,W
+001F6:  XORLW  4C
+001F8:  BZ    020C
+001FA:  XORLW  0A
+001FC:  BZ    0212
+001FE:  XORLW  22
+00200:  BZ    0218
+00202:  XORLW  0C
+00204:  BZ    021E
+00206:  XORLW  38
+00208:  BZ    0224
+0020A:  BRA    0240
+....................          { 
+....................             case 'L': 
+....................              //  printf("Reading Level Sensor\r\n"); 
+....................                current_state = SEND_LEVEL; 
+0020C:  MOVLW  07
+0020E:  MOVWF  19
+....................                break; 
+00210:  BRA    0240
+....................                 
+....................             case 'F': 
+....................                //printf("Reading flow sensor \r\n"); 
+....................                current_state = SEND_FLOW; 
+00212:  MOVLW  06
+00214:  MOVWF  19
+....................                break; 
+00216:  BRA    0240
+....................                 
+....................             case 'd': 
+....................                status = SYSTEM_OFF; 
+00218:  CLRF   17
+....................                hanshake_variable = 0; 
+0021A:  CLRF   18
+....................               // printf("System Disconnected \n\r"); 
+....................                break; 
+0021C:  BRA    0240
+....................                 
+....................             case 'h': 
+....................              
+....................                //this is if the master request another handshake,send it or it go in deep loop 
+....................                //wait for ever LMFAO 
+....................                current_state = SEND_ACK; 
+0021E:  MOVLW  0A
+00220:  MOVWF  19
+....................                break; 
+00222:  BRA    0240
+....................                 
+....................             case 'P': 
+....................                //set the current state to set pump state to send an ack to the master  
+....................                current_state = SET_PUMP_SPEED; 
+00224:  MOVLW  08
+00226:  MOVWF  19
+....................                delay_ms(50); 
+00228:  MOVLW  32
+0022A:  MOVWF  22
+0022C:  RCALL  0132
+....................                //read the value  
+....................                int8 Pump_Speed = i2c_read(); 
+0022E:  BCF    FC6.6
+00230:  BTFSS  F9E.3
+00232:  BRA    0230
+00234:  MOVF   FC9,W
+00236:  BSF    FC6.4
+00238:  MOVWF  20
+....................                 
+....................                //pass it to this fucntion to change the speed of the pump 
+....................                set_PWM_PUMP_Speed(Pump_Speed); 
+0023A:  MOVFF  20,22
+0023E:  BRA    0004
+....................                break; 
+....................                 
+....................             default: 
+....................              
+....................               // printf("UnKnown Command!\n\r"); 
+....................          } 
+....................       } 
+00240:  BRA    0272
+....................       else if(status == SYSTEM_OFF) 
+00242:  MOVF   17,F
+00244:  BNZ   0272
+....................       { 
+....................          //printf("reading char h from mastert \n\r"); 
+....................          delay_ms(50); 
+00246:  MOVLW  32
+00248:  MOVWF  22
+0024A:  RCALL  0132
+....................          i2c_read(); 
+0024C:  BCF    FC6.6
+0024E:  BTFSS  F9E.3
+00250:  BRA    024E
+00252:  MOVF   FC9,W
+00254:  BSF    FC6.4
+....................          //fisrt byte is the address 
+....................         // printf("fisrt byte is the address%x\n\r",); 
+....................          delay_ms(50); 
+00256:  MOVLW  32
+00258:  MOVWF  22
+0025A:  RCALL  0132
+....................          char read_char = i2c_read(); 
+0025C:  BCF    FC6.6
+0025E:  BTFSS  F9E.3
+00260:  BRA    025E
+00262:  MOVF   FC9,W
+00264:  BSF    FC6.4
+00266:  MOVWF  21
+....................           
+....................         // printf("I Just received the char%c\n\r",read_char); 
+....................           
+....................          //if the system received 'h' then this is for handshake 
+....................          if(read_char == 'h') 
+00268:  MOVF   21,W
+0026A:  SUBLW  68
+0026C:  BNZ   0272
+....................          { 
+....................             //set handshake variable to 1 
+....................             //printf("OK \n\r"); 
+....................             hanshake_variable = 1; 
+0026E:  MOVLW  01
+00270:  MOVWF  18
+....................             //here do not make the program on,make it above when you send the char a 
+....................          } 
+....................          else 
+....................          { 
+....................            // printf("Not OK \n\r"); 
+....................          } 
+....................       } 
+....................    } 
+00272:  BCF    F9E.3
+00274:  GOTO   0054
+.................... } 
+....................  
+.................... /*********** Main Function ***********/ 
+.................... void main() 
+*
+00300:  CLRF   FF8
+00302:  BCF    FD0.7
+00304:  BSF    07.7
+00306:  BSF    FB8.3
+00308:  MOVLW  08
+0030A:  MOVWF  FAF
+0030C:  MOVLW  02
+0030E:  MOVWF  FB0
+00310:  MOVLW  A6
+00312:  MOVWF  FAC
+00314:  MOVLW  90
+00316:  MOVWF  FAB
+00318:  BSF    F94.3
+0031A:  BSF    F94.4
+0031C:  MOVLW  15
+0031E:  MOVWF  FC8
+00320:  MOVLW  36
+00322:  MOVWF  FC6
+00324:  BSF    FC5.0
+00326:  CLRF   17
+00328:  CLRF   18
+0032A:  MOVLW  05
+0032C:  MOVWF  19
+0032E:  MOVLW  03
+00330:  MOVWF  1B
+00332:  MOVF   FC1,W
+00334:  ANDLW  C0
+00336:  IORLW  0F
+00338:  MOVWF  FC1
+0033A:  MOVLW  07
+0033C:  MOVWF  FB4
+.................... { 
+....................    //enable I2C Inturrept 
+....................    enable_interrupts(int_SSP); 
+0033E:  BSF    F9D.3
+....................    enable_interrupts(GLOBAL); 
+00340:  MOVLW  C0
+00342:  IORWF  FF2,F
+....................     
+....................    //setup_timer_1(T1_INTERNAL|T1_DIV_BY_1);      //65.5 ms overflow 
+....................    //setup_timer_2(T2_DIV_BY_4,511,1);      //1.0 ms overflow, 1.0 ms interrupt 
+....................  
+....................    setup_ccp2(CCP_PWM); 
+00344:  BCF    F94.1
+00346:  BCF    F8B.1
+00348:  MOVLW  0C
+0034A:  MOVWF  FBA
+....................    //set_pwm2_duty(0); 
+....................     
+....................    printf("***************Start of the Program*****************\n\r"); 
+0034C:  MOVLW  C8
+0034E:  MOVWF  FF6
+00350:  MOVLW  02
+00352:  MOVWF  FF7
+00354:  CLRF   16
+00356:  BTFSC  FF2.7
+00358:  BSF    16.7
+0035A:  BCF    FF2.7
+0035C:  RCALL  00E0
+0035E:  BTFSC  16.7
+00360:  BSF    FF2.7
+....................    while(TRUE) 
+....................    { 
+00362:  BRA    0362
+....................       //TODO: User Code 
+....................    } 
+.................... } 
+....................  
+00364:  SLEEP 
+
+Configuration Fuses:
+   Word  1: C200   HS FCMEN IESO
+   Word  2: 0118   PUT NOBROWNOUT BORV21 WDT WDT1
+   Word  3: 8700   CCP2C1 PBADEN LPT1OSC MCLR
+   Word  4: 0081   STVREN NOLVP NOXINST NODEBUG
+   Word  5: C00F   NOPROTECT NOCPB NOCPD
+   Word  6: E00F   NOWRT NOWRTC NOWRTB NOWRTD
+   Word  7: 400F   NOEBTR NOEBTRB
