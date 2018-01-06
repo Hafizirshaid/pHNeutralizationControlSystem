@@ -1,1 +1,3 @@
-# pHControlSystem
+# pH Nutralization Control System using Fuzzy Logic
+
+In this project, we built a control system to control the pH degree of a solution resulting from acid and base. Our control algorithm is based on fuzzy logic, and our software program that controls microcontrollers is written in MATLAB. This system consists of three microcontrollers. The master and two slave microcontrollers connected together using I2C, the master is in the middle between the MATLAB and the Acid and base tank. Its responsibility is to send data to slaves and send it again to MATLAB. The acid and base tanks has two sensors, level sensor and flow sensor. In addition, it contains a pump. MATLAB program reads all sensors and loads them to the Fuzzy logic controller, and then produce an output which is used to control the pump speed.
